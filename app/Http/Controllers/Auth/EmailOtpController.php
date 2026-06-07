@@ -27,7 +27,7 @@ class EmailOtpController extends Controller
             return response()->json(['message' => 'Email already verified.'], 409);
         }
 
-        app(\App\Services\EmailOtpService::class)->sendFor($user);
+        app(\App\Services\OtpService::class)->sendFor($user);
 
         return response()->json(['message' => 'Verification OTP sent.']);
     }
@@ -70,7 +70,7 @@ class EmailOtpController extends Controller
 
         // throttle or rate-limit resend as desired - omitted for brevity
 
-        app(\App\Services\EmailOtpService::class)->sendFor($user);
+        app(\App\Services\OtpService::class)->sendFor($user);
 
         return response()->json(['message' => 'Verification OTP sent.']);
     }

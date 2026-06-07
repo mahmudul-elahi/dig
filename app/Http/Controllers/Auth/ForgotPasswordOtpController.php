@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Responses\MessageResponse;
 
 class ForgotPasswordOtpController extends Controller
 {
@@ -15,9 +16,9 @@ class ForgotPasswordOtpController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        app(\App\Services\EmailOtpService::class)->sendFor($user, 'forgot_password');
+        app(\App\Services\OtpService::class)->sendFor($user, 'forgot_password');
 
-        return response()->json(['message' => 'Password reset OTP sent.']);
+        return (new MessageResponse('Password reset OTP sent.'))->toResponse(request());
     }
 
     public function verify(Request $request): JsonResponse
@@ -35,11 +36,11 @@ class ForgotPasswordOtpController extends Controller
             ->first();
 
         if (! $record || $record->isExpired() || ! \Illuminate\Support\Facades\Hash::check($request->otp, $record->otp_hash)) {
-            return response()->json(['message' => 'Invalid or expired OTP.'], 422);
+            return (new MessageResponse('Invalid or expired OTP.', 422))->toResponse(request());
         }
 
         // OTP is valid; allow client to proceed to reset password. We can return a short-lived token or just 200.
         // For now return a simple success message.
-        return response()->json(['message' => 'OTP validated. Proceed to reset password.']);
+        return (new MessageResponse('OTP validated. Proceed to reset password.'))->toResponse(request());
     }
 }
