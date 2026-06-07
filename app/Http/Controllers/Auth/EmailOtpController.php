@@ -73,21 +73,4 @@ class EmailOtpController extends Controller
 
         return response()->json(['message' => 'Verification OTP sent.']);
     }
-
-    protected function createAndSendOtp(User $user): JsonResponse
-    {
-        // create and store OTP for the user
-        $otp = (string) random_int(10000, 99999);
-        $otpHash = Hash::make($otp);
-
-        EmailVerificationOtp::create([
-            'user_id' => $user->id,
-            'otp_hash' => $otpHash,
-            'expires_at' => Carbon::now()->addMinutes($this->ttlMinutes),
-        ]);
-
-        $user->notify(new SendOtpVerification($otp));
-
-        return response()->json(['message' => 'Verification OTP sent.']);
-    }
 }

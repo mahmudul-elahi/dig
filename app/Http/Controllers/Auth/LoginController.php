@@ -11,6 +11,9 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Services\EmailOtpService;
+use App\Http\Responses\MessageResponse;
+use Illuminate\Http\Response;
 
 #[Group('Authentication')]
 class LoginController extends Controller
@@ -28,6 +31,13 @@ class LoginController extends Controller
             throw ValidationException::withMessages([
                 'email' => [__('auth.failed')],
             ]);
+        }
+
+        // if the user's email is not verified, send OTP and instruct verification
+        if (! $user->hasVerifiedEmail()) {
+            app(EmailOtpService::class)->sendFor($user);
+
+            return (new MessageResponse('Please verify your email. Verification OTP sent.', Response::HTTP_FORBIDDEN))->toResponse(request());
         }
 
         $token = $user->createToken('auth')->plainTextToken;

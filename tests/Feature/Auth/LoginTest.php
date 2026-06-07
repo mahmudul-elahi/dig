@@ -75,6 +75,23 @@ class LoginTest extends TestCase
             ->assertJsonPath('errors.email.0', __('auth.failed'));
     }
 
+    public function test_unverified_user_is_prompted_to_verify_on_login(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->postJson(route('login'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertForbidden()
+            ->assertJson(['message' => 'Please verify your email. Verification OTP sent.']);
+
+        Notification::assertSentTo($user, \App\Notifications\SendOtpVerification::class);
+    }
+
     public function test_login_checks_a_password_hash_for_nonexistent_email(): void
     {
         Hash::shouldReceive('check')

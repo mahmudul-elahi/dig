@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\PasswordUpdateController;
@@ -19,10 +20,8 @@ Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
     ->middleware('signed')
     ->name('verification.verify');
 
-// Public Email OTP verification endpoints (send/verify/resend)
-Route::post('email/otp/send', [\App\Http\Controllers\Auth\EmailOtpController::class, 'send']);
-Route::post('email/otp/verify', [\App\Http\Controllers\Auth\EmailOtpController::class, 'verify']);
-Route::post('email/otp/resend', [\App\Http\Controllers\Auth\EmailOtpController::class, 'resend']);
+Route::post('email/otp/verify', [EmailOtpController::class, 'verify']);
+Route::post('email/otp/resend', [EmailOtpController::class, 'resend']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
