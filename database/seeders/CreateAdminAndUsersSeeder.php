@@ -19,17 +19,17 @@ class CreateAdminAndUsersSeeder extends Seeder
         // Use firstOrCreate so the seeder is idempotent and doesn't overwrite existing passwords
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            ['name' => 'Admin User', 'role' => 'admin', 'password' => Hash::make('password')]
+            ['name' => 'Admin User', 'email_verified_at' => now(), 'role' => 'admin', 'password' => Hash::make('password')]
         );
 
         User::firstOrCreate(
             ['email' => 'user1@example.com'],
-            ['name' => 'User One', 'role' => 'user', 'password' => Hash::make('password')]
+            ['name' => 'User One', 'email_verified_at' => now(), 'role' => 'user', 'password' => Hash::make('password')]
         );
 
         User::firstOrCreate(
             ['email' => 'user2@example.com'],
-            ['name' => 'User Two', 'role' => 'user', 'password' => Hash::make('password')]
+            ['name' => 'User Two', 'email_verified_at' => now(), 'role' => 'user', 'password' => Hash::make('password')]
         );
     }
 }
