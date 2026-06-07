@@ -45,13 +45,11 @@ class EmailOtpController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.'], 409);
+            return (new MessageResponse('Email already verified.', 409))->toResponse(request());
         }
-
-        // throttle or rate-limit resend as desired - omitted for brevity
 
         app(\App\Services\OtpService::class)->sendFor($user);
 
-        return response()->json(['message' => 'Verification OTP sent.']);
+        return (new MessageResponse('Verification OTP sent.'))->toResponse(request());
     }
 }
