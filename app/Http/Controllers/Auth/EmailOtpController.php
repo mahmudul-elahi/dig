@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\EmailVerificationOtp;
+use App\Models\Otp;
 use App\Notifications\SendOtpVerification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -41,7 +41,7 @@ class EmailOtpController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        $record = EmailVerificationOtp::where('user_id', $user->id)
+        $record = Otp::where('user_id', $user->id)
             ->ofType('email_verification')
             ->latest()
             ->first();
@@ -53,7 +53,7 @@ class EmailOtpController extends Controller
         $user->markEmailAsVerified();
 
         // delete all OTPs for the user
-        EmailVerificationOtp::where('user_id', $user->id)->delete();
+        Otp::where('user_id', $user->id)->delete();
 
         return response()->json(['message' => 'Email verified.']);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\EmailVerificationOtp;
+use App\Models\Otp;
 use App\Models\User;
 use App\Notifications\SendOtpVerification;
 use Illuminate\Support\Facades\Hash;
@@ -24,7 +24,7 @@ class EmailOtpService
     {
         $otp = (string) random_int(10000, 99999);
 
-        EmailVerificationOtp::create([
+        Otp::create([
             'user_id' => $user->id,
             'type' => $type,
             'otp_hash' => Hash::make($otp),
