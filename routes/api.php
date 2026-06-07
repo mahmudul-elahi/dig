@@ -41,12 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::get('/', function () {
                 return response()->json(['message' => 'Welcome to admin area']);
-            })->name('admin.index');
+            });
 
             Route::get('stats', function () {
                 // placeholder; replace with controller action
                 return response()->json(['users' => 0]);
-            })->name('admin.stats');
+            });
         });
 
     // User-only API section
@@ -55,8 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::get('/', function () {
                 return response()->json(['message' => 'Welcome to user area']);
-            })->name('user.index');
+            });
 
-            Route::get('me', [ProfileController::class, 'show'])->name('user.me');
+            Route::get('me', [ProfileController::class, 'show']);
         });
 });
