@@ -35,28 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // Admin-only API section
-    Route::prefix('admin')
-        ->middleware('role:admin')
-        ->group(function () {
-            Route::get('/', function () {
-                return response()->json(['message' => 'Welcome to admin area']);
-            });
-
-            Route::get('stats', function () {
-                // placeholder; replace with controller action
-                return response()->json(['users' => 0]);
-            });
-        });
-
-    // User-only API section
-    Route::prefix('user')
-        ->middleware('role:user')
-        ->group(function () {
-            Route::get('/', function () {
-                return response()->json(['message' => 'Welcome to user area']);
-            });
-
-            Route::get('me', [ProfileController::class, 'show']);
-        });
+    // include admin and user route files (they assume they're inside the auth:sanctum group)
+    require __DIR__ . '/admin.php';
+    require __DIR__ . '/user.php';
 });
