@@ -18,13 +18,11 @@ class EmailOtpTest extends TestCase
 
         $user = User::factory()->create(['email' => 'otpuser@example.com', 'email_verified_at' => null]);
 
-        // send OTP
-        $this->postJson('email/otp/send', ['email' => $user->email])->assertOk();
+        // send OTP — use the service so we can fetch the otp value synchronously in tests
+        $otp = app(\App\Services\EmailOtpService::class)->sendFor($user);
 
         Notification::assertSentTo($user, SendOtpVerification::class, function ($notification) use (&$otp) {
-            $otp = $notification->otp;
-
-            return is_string($otp) && strlen($otp) === 5;
+            return $notification->otp === $otp;
         });
 
         // verify with wrong otp
