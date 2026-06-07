@@ -4,14 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Endpoint;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Responses\MessageResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password as PasswordRules;
 
+#[Group('Authentication')]
 class ForgotPasswordOtpController extends Controller
 {
+
+    #[Endpoint(title: 'Send Password Reset OTP', description: 'Send a 5-digit OTP to the user\'s email for password reset.')]
     public function send(Request $request): JsonResponse
     {
         $request->validate(['email' => ['required', 'email']]);
@@ -23,6 +28,7 @@ class ForgotPasswordOtpController extends Controller
         return (new MessageResponse('Password reset OTP sent.'))->toResponse(request());
     }
 
+    #[Endpoint(title: 'Verify Password Reset OTP', description: 'Verify the password reset OTP sent to the user\'s email.')]
     public function verify(Request $request): JsonResponse
     {
         $request->validate([
@@ -46,6 +52,7 @@ class ForgotPasswordOtpController extends Controller
         return (new MessageResponse('OTP validated. Proceed to reset password.'))->toResponse(request());
     }
 
+    #[Endpoint(title: 'Reset Password', description: 'Reset the user\'s password using a verified OTP. Requires email, otp, password, and password_confirmation.')]
     public function reset(Request $request): JsonResponse
     {
         $request->validate([
