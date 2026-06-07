@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Otp;
 use App\Models\User;
 use App\Notifications\SendOtpVerification;
+use App\Notifications\SendPasswordResetOtp;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 
@@ -31,7 +32,11 @@ class EmailOtpService
             'expires_at' => Carbon::now()->addMinutes($this->ttlMinutes),
         ]);
 
-        $user->notify(new SendOtpVerification($otp));
+        if ($type === 'forgot_password') {
+            $user->notify(new SendPasswordResetOtp($otp));
+        } else {
+            $user->notify(new SendOtpVerification($otp));
+        }
 
         return $otp;
     }

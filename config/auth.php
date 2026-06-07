@@ -95,7 +95,8 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            // Using unified otp table for password reset tokens. Keep expire/throttle for compatibility.
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'otps'),
             'expire' => 60,
             'throttle' => 60,
         ],

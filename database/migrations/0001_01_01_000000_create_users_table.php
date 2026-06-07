@@ -21,11 +21,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+        // password_reset_tokens table removed - using unified 'otps' table for password reset tokens
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();

@@ -22,6 +22,8 @@ Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
 
 Route::post('email/otp/verify', [EmailOtpController::class, 'verify']);
 Route::post('email/otp/resend', [EmailOtpController::class, 'resend']);
+Route::post('password/otp/send', [\App\Http\Controllers\Auth\ForgotPasswordOtpController::class, 'send']);
+Route::post('password/otp/verify', [\App\Http\Controllers\Auth\ForgotPasswordOtpController::class, 'verify']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
