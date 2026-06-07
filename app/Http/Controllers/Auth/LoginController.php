@@ -35,7 +35,7 @@ class LoginController extends Controller
 
         // if the user's email is not verified, send OTP and instruct verification
         if (! $user->hasVerifiedEmail()) {
-            app(EmailOtpService::class)->sendFor($user);
+            app(\App\Services\OtpService::class)->sendFor($user);
 
             return (new MessageResponse('Please verify your email. Verification OTP sent.', Response::HTTP_FORBIDDEN))->toResponse(request());
         }
