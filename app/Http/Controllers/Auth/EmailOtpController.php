@@ -11,14 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Responses\MessageResponse;
-use Dedoc\Scramble\Attributes\Endpoint;
-use Dedoc\Scramble\Attributes\Group;
 
-#[Group('Authentication')]
 #[Group('Authentication')]
 class EmailOtpController extends Controller
 {
-    #[Endpoint(title: 'Register', description: 'Create a new user account. No token is created on registration.')]
     #[Endpoint(title: "Verify Email OTP", description: "Validate the 5-digit OTP sent to the user's email to verify their email address.")]
     public function verify(Request $request): JsonResponse
     {
@@ -45,7 +41,6 @@ class EmailOtpController extends Controller
         return (new MessageResponse('Email verified.'))->toResponse(request());
     }
 
-    #[Endpoint(title: 'Register', description: 'Create a new user account. No token is created on registration.')]
     #[Endpoint(title: "Resend Email OTP", description: "Resend the 5-digit verification OTP to the user's email address.")]
     public function resend(Request $request): JsonResponse
     {

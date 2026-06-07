@@ -33,7 +33,6 @@ class LoginController extends Controller
             ]);
         }
 
-        // if the user's email is not verified, send OTP and instruct verification
         if (! $user->hasVerifiedEmail()) {
             app(\App\Services\OtpService::class)->sendFor($user);
 
@@ -42,7 +41,6 @@ class LoginController extends Controller
 
         $token = $user->createToken('auth')->plainTextToken;
 
-        // return the token and the user resource
         return response()->json([
             'token' => $token,
             'user' => (new UserResource($user))->resolve(),

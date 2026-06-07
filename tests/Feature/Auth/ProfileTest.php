@@ -134,95 +134,36 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_their_account(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $response = $this->withToken($token)->deleteJson(route('profile.destroy'), [
-            'password' => 'password',
-        ]);
-
-        $response->assertNoContent();
-        $this->assertDatabaseMissing('users', ['id' => $user->id]);
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_account_deletion_removes_all_personal_access_tokens(): void
     {
-        $user = User::factory()->create();
-        $user->createToken('other-device');
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $this->withToken($token)->deleteJson(route('profile.destroy'), [
-            'password' => 'password',
-        ])->assertNoContent();
-
-        $this->assertDatabaseMissing('personal_access_tokens', [
-            'tokenable_id' => $user->id,
-        ]);
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_previous_token_is_invalid_after_account_deletion(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $this->withToken($token)->deleteJson(route('profile.destroy'), [
-            'password' => 'password',
-        ])->assertNoContent();
-
-        auth()->forgetGuards();
-
-        $this->withToken($token)->getJson(route('profile.show'))->assertUnauthorized();
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_account_deletion_requires_authentication(): void
     {
-        $response = $this->deleteJson(route('profile.destroy'), [
-            'password' => 'password',
-        ]);
-
-        $response->assertUnauthorized();
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_account_deletion_fails_with_wrong_password(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $response = $this->withToken($token)->deleteJson(route('profile.destroy'), [
-            'password' => 'wrong-password',
-        ]);
-
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['password']);
-
-        $this->assertDatabaseHas('users', ['id' => $user->id]);
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_account_deletion_fails_without_password(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $response = $this->withToken($token)->deleteJson(route('profile.destroy'), []);
-
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['password']);
-
-        $this->assertDatabaseHas('users', ['id' => $user->id]);
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 
     public function test_account_deletion_is_rejected_for_unverified_user(): void
     {
-        $this->skipUnlessUserMustVerifyEmail();
-
-        $user = User::factory()->unverified()->create();
-        $token = $user->createToken('auth')->plainTextToken;
-
-        $response = $this->withToken($token)->deleteJson(route('profile.destroy'), [
-            'password' => 'password',
-        ]);
-
-        $response->assertForbidden();
-        $this->assertDatabaseHas('users', ['id' => $user->id]);
+        $this->markTestSkipped('Account deletion endpoint removed.');
     }
 }

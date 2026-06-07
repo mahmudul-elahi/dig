@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\DeleteUserRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use Dedoc\Scramble\Attributes\Endpoint;
@@ -41,16 +40,5 @@ class ProfileController extends Controller
         return new UserResource($user);
     }
 
-    #[Endpoint(title: 'Delete Account', description: "Permanently delete the authenticated user's account and revoke all their tokens.")]
-    public function destroy(DeleteUserRequest $request): Response
-    {
-        $user = $request->user();
-
-        DB::transaction(function () use ($user): void {
-            $user->tokens()->delete();
-            $user->delete();
-        });
-
-        return response()->noContent();
-    }
+    
 }

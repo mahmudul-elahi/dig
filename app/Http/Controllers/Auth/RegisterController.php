@@ -24,10 +24,8 @@ class RegisterController extends Controller
             return User::create($request->validated());
         });
 
-        // Send OTP for email verification instead of firing the Registered event
         app(\App\Services\OtpService::class)->sendFor($user);
 
-        // Return a message-only response indicating the OTP was sent
         return (new MessageResponse('Verification OTP sent.', Response::HTTP_CREATED))->toResponse(request());
     }
 }
