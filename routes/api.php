@@ -19,6 +19,11 @@ Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
     ->middleware('signed')
     ->name('verification.verify');
 
+// Public Email OTP verification endpoints (send/verify/resend)
+Route::post('email/otp/send', [\App\Http\Controllers\Auth\EmailOtpController::class, 'send']);
+Route::post('email/otp/verify', [\App\Http\Controllers\Auth\EmailOtpController::class, 'verify']);
+Route::post('email/otp/resend', [\App\Http\Controllers\Auth\EmailOtpController::class, 'resend']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
     Route::post('token/refresh', RefreshTokenController::class)->name('token.refresh');
@@ -35,7 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // include admin and user route files (they assume they're inside the auth:sanctum group)
+
     require __DIR__ . '/admin.php';
     require __DIR__ . '/user.php';
+
+    // (email OTP endpoints are public and already registered)
 });

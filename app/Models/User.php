@@ -46,4 +46,11 @@ class User extends Authenticatable
     {
         return $this->hasRole('admin');
     }
+
+    public function markEmailAsVerified(): bool
+    {
+        $this->email_verified_at = now();
+
+        return $this->save();
+    }
 }
