@@ -8,12 +8,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Responses\MessageResponse;
 
 class EmailOtpController extends Controller
 {
-    // otp length and ttl are now defined in the OtpService; controller does not maintain these values
-
-    // The send action is not used; OTPs are sent on registration and via resend only.
 
     public function verify(Request $request): JsonResponse
     {
@@ -35,10 +33,9 @@ class EmailOtpController extends Controller
 
         $user->markEmailAsVerified();
 
-        // delete all OTPs for the user
         Otp::where('user_id', $user->id)->delete();
 
-        return response()->json(['message' => 'Email verified.']);
+        return (new MessageResponse('Email verified.'))->toResponse(request());
     }
 
     public function resend(Request $request): JsonResponse
