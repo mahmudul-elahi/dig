@@ -9,7 +9,7 @@ use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Support\Facades\DB;
 
-#[Group('Password')]
+#[Group('Profile')]
 class PasswordUpdateController extends Controller
 {
     #[Endpoint(title: 'Update Password', description: "Update the authenticated user's password.")]

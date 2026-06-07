@@ -18,6 +18,7 @@ return [
             'docs',
             'sanctum/csrf-cookie',
             'storage/*',
+            '_boost/*',
         ],
     ],
 
