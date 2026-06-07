@@ -8,27 +8,25 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use App\Services\EmailOtpService;
 
 #[Group('Authentication')]
 class RegisterController extends Controller
 {
-    #[Endpoint(title: 'Register', description: 'Create a new user account and return an API token.')]
+    #[Endpoint(title: 'Register', description: 'Create a new user account. No token is created on registration.')]
     public function __invoke(RegisterRequest $request): JsonResponse
     {
-        [$user, $token] = DB::transaction(function () use ($request): array {
-            $user = User::create($request->validated());
-
-            return [$user, $user->createToken($request->string('device_name', 'auth'))->plainTextToken];
+        $user = DB::transaction(function () use ($request): User {
+            return User::create($request->validated());
         });
 
-        event(new Registered($user));
+        // Send OTP for email verification instead of firing the Registered event
+        app(EmailOtpService::class)->sendFor($user);
 
         return (new UserResource($user))
-            ->additional(['meta' => ['token' => $token]])
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
