@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,20 +16,20 @@ class CreateAdminAndUsersSeeder extends Seeder
      */
     public function run(): void
     {
-        // Use updateOrCreate so the seeder is idempotent
-        User::updateOrCreate(
+        // Use firstOrCreate so the seeder is idempotent and doesn't overwrite existing passwords
+        User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            ['name' => 'Admin User', 'role' => 'admin']
+            ['name' => 'Admin User', 'role' => 'admin', 'password' => Hash::make('password')]
         );
 
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'user1@example.com'],
-            ['name' => 'User One', 'role' => 'user']
+            ['name' => 'User One', 'role' => 'user', 'password' => Hash::make('password')]
         );
 
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'user2@example.com'],
-            ['name' => 'User Two', 'role' => 'user']
+            ['name' => 'User Two', 'role' => 'user', 'password' => Hash::make('password')]
         );
     }
 }
