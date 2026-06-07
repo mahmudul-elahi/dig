@@ -22,10 +22,8 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertCreated()
-            ->assertJsonStructure(['data', 'meta'])
-            ->assertJsonPath('data.attributes.email', 'test@example.com');
+            ->assertJson(['message' => 'Verification OTP sent.']);
 
-        $this->assertIsString($response->json('meta.token'));
         $this->assertDatabaseHas('users', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -33,7 +31,8 @@ class RegisterTest extends TestCase
 
         $user = User::where('email', 'test@example.com')->firstOrFail();
 
-        $this->assertDatabaseHas('personal_access_tokens', [
+        // registration should NOT create a personal access token
+        $this->assertDatabaseMissing('personal_access_tokens', [
             'tokenable_id' => $user->id,
             'name' => 'auth',
         ]);
@@ -46,15 +45,15 @@ class RegisterTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-            'device_name' => 'iPhone',
         ]);
 
         $response->assertCreated()
-            ->assertJsonStructure(['data', 'meta']);
+            ->assertJson(['message' => 'Verification OTP sent.']);
 
         $user = User::where('email', 'test@example.com')->firstOrFail();
 
-        $this->assertDatabaseHas('personal_access_tokens', [
+        // device_name is no longer supported on registration
+        $this->assertDatabaseMissing('personal_access_tokens', [
             'tokenable_id' => $user->id,
             'name' => 'iPhone',
         ]);

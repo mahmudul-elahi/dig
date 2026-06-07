@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
@@ -29,8 +30,12 @@ class LoginController extends Controller
             ]);
         }
 
-        $token = $user->createToken($request->string('device_name', 'auth'))->plainTextToken;
+        $token = $user->createToken('auth')->plainTextToken;
 
-        return response()->json(['token' => $token]);
+        // return the token and the user resource
+        return response()->json([
+            'token' => $token,
+            'user' => (new UserResource($user))->resolve(),
+        ]);
     }
 }

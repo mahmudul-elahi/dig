@@ -50,7 +50,6 @@ class LoginTest extends TestCase
         $response = $this->postJson(route('login'), [
             'email' => $user->email,
             'password' => 'password',
-            'device_name' => 'iPhone',
         ]);
 
         $response->assertOk()
@@ -58,7 +57,7 @@ class LoginTest extends TestCase
 
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_id' => $user->id,
-            'name' => 'iPhone',
+            'name' => 'auth',
         ]);
     }
 
