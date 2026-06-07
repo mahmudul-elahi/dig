@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\EmailOtpController;
+use App\Http\Controllers\Auth\ForgotPasswordOtpController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\PasswordUpdateController;
@@ -16,15 +17,13 @@ Route::middleware('throttle:5,1')->group(function () {
     Route::post('login', LoginController::class)->name('login');
 });
 
-Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
-    ->middleware('signed')
-    ->name('verification.verify');
+// Email verification is handled via the OTP endpoints; legacy signed-link route removed.
 
 Route::post('email/otp/verify', [EmailOtpController::class, 'verify']);
 Route::post('email/otp/resend', [EmailOtpController::class, 'resend']);
-Route::post('password/otp/send', [\App\Http\Controllers\Auth\ForgotPasswordOtpController::class, 'send']);
-Route::post('password/otp/verify', [\App\Http\Controllers\Auth\ForgotPasswordOtpController::class, 'verify']);
-Route::post('password/reset', [\App\Http\Controllers\Auth\ForgotPasswordOtpController::class, 'reset']);
+Route::post('password/otp/send', [ForgotPasswordOtpController::class, 'send']);
+Route::post('password/otp/verify', [ForgotPasswordOtpController::class, 'verify']);
+Route::post('password/reset', [ForgotPasswordOtpController::class, 'reset']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
@@ -38,9 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('user/password', PasswordUpdateController::class)->name('password.update');
     });
 
-    Route::post('email/verification-notification', SendVerificationNotificationController::class)
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
+    // Email verification notifications are now sent using the OTP flow; legacy route removed.
 
 
     require __DIR__ . '/admin.php';
