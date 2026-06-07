@@ -14,8 +14,7 @@ use Illuminate\Support\Carbon;
 
 class EmailOtpController extends Controller
 {
-    protected int $otpLength = 5;
-    protected int $ttlMinutes = 10;
+    // otp length and ttl are now defined in the OtpService; controller does not maintain these values
 
     public function send(Request $request): JsonResponse
     {
@@ -36,7 +35,7 @@ class EmailOtpController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'otp' => ['required', 'digits:' . $this->otpLength],
+            'otp' => ['required', 'digits:5'],
         ]);
 
         $user = User::where('email', $request->email)->firstOrFail();
