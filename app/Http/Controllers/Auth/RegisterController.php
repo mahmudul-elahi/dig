@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Services\EmailOtpService;
+use App\Http\Responses\MessageResponse;
 
 #[Group('Authentication')]
 class RegisterController extends Controller
@@ -26,8 +27,7 @@ class RegisterController extends Controller
         // Send OTP for email verification instead of firing the Registered event
         app(EmailOtpService::class)->sendFor($user);
 
-        return (new UserResource($user))
-            ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+        // Return a message-only response indicating the OTP was sent
+        return (new MessageResponse('Verification OTP sent.', Response::HTTP_CREATED))->toResponse(request());
     }
 }
