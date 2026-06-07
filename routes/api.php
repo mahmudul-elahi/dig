@@ -34,4 +34,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('email/verification-notification', SendVerificationNotificationController::class)
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    // Admin-only API section
+    Route::prefix('admin')
+        ->middleware('role:admin')
+        ->group(function () {
+            Route::get('/', function () {
+                return response()->json(['message' => 'Welcome to admin area']);
+            })->name('admin.index');
+
+            Route::get('stats', function () {
+                // placeholder; replace with controller action
+                return response()->json(['users' => 0]);
+            })->name('admin.stats');
+        });
+
+    // User-only API section
+    Route::prefix('user')
+        ->middleware('role:user')
+        ->group(function () {
+            Route::get('/', function () {
+                return response()->json(['message' => 'Welcome to user area']);
+            })->name('user.index');
+
+            Route::get('me', [ProfileController::class, 'show'])->name('user.me');
+        });
 });
