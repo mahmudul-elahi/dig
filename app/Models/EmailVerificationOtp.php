@@ -10,7 +10,12 @@ class EmailVerificationOtp extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'otp_hash', 'expires_at'];
+    protected $fillable = ['user_id', 'type', 'otp_hash', 'expires_at'];
+
+    // types: 'email_verification', 'forgot_password'
+    protected $attributes = [
+        'type' => 'email_verification',
+    ];
 
     protected $casts = [
         'expires_at' => 'datetime',
@@ -24,5 +29,10 @@ class EmailVerificationOtp extends Model
     public function isExpired(): bool
     {
         return $this->expires_at->isPast();
+    }
+
+    public function scopeOfType($query, string $type)
+    {
+        return $query->where('type', $type);
     }
 }
