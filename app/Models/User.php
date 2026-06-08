@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['first_name', 'last_name', 'email', 'password', 'role', 'avatar', 'provider', 'provider_id', 'is_premium', 'ends_at'])]
+#[Fillable(['first_name', 'last_name', 'email', 'password', 'role', 'avatar', 'provider', 'provider_id', 'is_active', 'is_premium', 'subscription_type', 'ends_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,6 +29,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'ends_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -65,5 +66,20 @@ class User extends Authenticatable
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function latestSubscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany();
+    }
+
+    public function scopeSubscriptionType($query, string $type): void
+    {
+        $query->where('subscription_type', $type);
+    }
+
+    public function scopeCreatedAtDate($query, string $date): void
+    {
+        $query->whereDate('created_at', $date);
     }
 }

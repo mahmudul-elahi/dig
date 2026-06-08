@@ -21,7 +21,9 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->boolean('is_premium')->default(false);
+            $table->string('subscription_type')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

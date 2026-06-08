@@ -63,11 +63,28 @@ class RevenueCatController extends Controller
     private function activatePremium(User $user, array $event): void
     {
         $expirationAt = $this->timestampFromMs($event['expiration_at_ms'] ?? null);
+        $productId = $event['product_id'] ?? '';
 
         $user->update([
             'is_premium' => true,
+            'subscription_type' => $this->resolveSubscriptionType($productId),
             'ends_at' => $expirationAt,
         ]);
+    }
+
+    private function resolveSubscriptionType(string $productId): string
+    {
+        $productId = strtolower($productId);
+
+        if (str_contains($productId, 'lifetime') || str_contains($productId, 'life_time')) {
+            return 'life_time';
+        }
+
+        if (str_contains($productId, 'yearly') || str_contains($productId, 'annual')) {
+            return 'yearly';
+        }
+
+        return 'monthly';
     }
 
     private function expirePremium(User $user, array $event): void
