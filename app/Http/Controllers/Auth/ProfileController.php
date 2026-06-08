@@ -9,13 +9,11 @@ use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 
 #[Group('Profile')]
 class ProfileController extends Controller
 {
-    #[Endpoint(title: 'Current User', description: "Get the authenticated user's information.")]
+    #[Endpoint(title: 'Me', description: "Get the authenticated user's information.")]
     public function show(Request $request): UserResource
     {
         return new UserResource($request->user());
@@ -39,6 +37,4 @@ class ProfileController extends Controller
 
         return new UserResource($user);
     }
-
-    
 }

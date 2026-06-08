@@ -13,7 +13,9 @@
         "dedoc/scramble": "^0.13.26",
         "laravel/framework": "^13.6",
         "laravel/sanctum": "^4.3",
-        "laravel/tinker": "^3.0"
+        "laravel/socialite": "^5.27",
+        "laravel/tinker": "^3.0",
+        "socialiteproviders/apple": "^5.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

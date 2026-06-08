@@ -8,11 +8,13 @@ use App\Http\Controllers\Auth\PasswordUpdateController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RefreshTokenController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('register', RegisterController::class);
     Route::post('login', LoginController::class);
+    Route::post('social/login', SocialLoginController::class);
 
     Route::post('email/otp/verify', [EmailOtpController::class, 'verify']);
     Route::post('email/otp/resend', [EmailOtpController::class, 'resend']);
