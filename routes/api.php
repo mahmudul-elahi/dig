@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\QuoteLikeController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\ForgotPasswordOtpController;
 use App\Http\Controllers\Auth\LoginController;
@@ -36,6 +38,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('me', [ProfileController::class, 'show']);
     Route::patch('user', [ProfileController::class, 'update']);
     Route::patch('user/password', PasswordUpdateController::class);
+
+    Route::apiResource('quotes', QuoteController::class);
+    Route::post('quotes/{quote}/likes', [QuoteLikeController::class, 'store']);
+    Route::delete('quotes/{quote}/likes', [QuoteLikeController::class, 'destroy']);
 
     require __DIR__.'/admin.php';
     require __DIR__.'/user.php';

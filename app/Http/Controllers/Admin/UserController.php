@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-#[Group('Admin')]
+#[Group('Admin Users Management')]
 class UserController extends Controller
 {
     #[Endpoint(title: 'List Users', description: 'Retrieve a list of all users.')]

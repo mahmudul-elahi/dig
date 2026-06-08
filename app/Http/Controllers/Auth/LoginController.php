@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Responses\MessageResponse;
 use App\Models\User;
+use App\Services\OtpService;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Services\EmailOtpService;
-use App\Http\Responses\MessageResponse;
-use Illuminate\Http\Response;
 
 #[Group('Authentication')]
 class LoginController extends Controller
@@ -34,7 +34,7 @@ class LoginController extends Controller
         }
 
         if (! $user->hasVerifiedEmail()) {
-            app(\App\Services\OtpService::class)->sendFor($user);
+            app(OtpService::class)->sendFor($user);
 
             return (new MessageResponse('Please verify your email. Verification OTP sent.', Response::HTTP_FORBIDDEN))->toResponse(request());
         }

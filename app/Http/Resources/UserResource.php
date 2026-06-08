@@ -2,15 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\JsonApi\JsonApiResource;
-
-class UserResource extends JsonApiResource
+class UserResource extends ApiResource
 {
-    protected bool $usesRequestQueryString = false;
-
-    /**
-     * The resource's attributes.
-     */
     public $attributes = [
         'first_name',
         'last_name',
@@ -23,5 +16,11 @@ class UserResource extends JsonApiResource
         'ends_at',
         'created_at',
         'updated_at',
+    ];
+
+    public $relationships = [
+        'notificationSetting' => NotificationSettingResource::class,
+        'latestSubscription' => SubscriptionResource::class,
+        'quotes' => QuoteResource::class,
     ];
 }

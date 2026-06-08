@@ -9,7 +9,7 @@ use App\Models\NotificationSetting;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 
-#[Group('User')]
+#[Group('User Notification Settings')]
 class NotificationController extends Controller
 {
     #[Endpoint(title: 'Show Notification Settings', description: 'Retrieve the notification settings for the authenticated user.')]

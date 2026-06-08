@@ -2,12 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\JsonApi\JsonApiResource;
-
-class NotificationSettingResource extends JsonApiResource
+class NotificationSettingResource extends ApiResource
 {
-    protected bool $usesRequestQueryString = false;
-
     public $attributes = [
         'meditation_reminders',
         'comment_alerts',
@@ -15,5 +11,9 @@ class NotificationSettingResource extends JsonApiResource
         'post_react_alerts',
         'created_at',
         'updated_at',
+    ];
+
+    public $relationships = [
+        'user' => UserResource::class,
     ];
 }
