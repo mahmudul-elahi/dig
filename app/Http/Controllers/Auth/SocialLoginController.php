@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SocialLoginRequest;
 use App\Http\Resources\UserResource;
+use App\Models\NotificationSetting;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 #[Group('Authentication')]
@@ -30,14 +32,20 @@ class SocialLoginController extends Controller
         if ($user === null) {
             $names = $this->splitName($socialUser->getName());
 
-            $user = User::create([
-                'first_name' => $names[0],
-                'last_name' => $names[1],
-                'email' => $socialUser->getEmail(),
-                'email_verified_at' => now(),
-                'provider' => $provider,
-                'provider_id' => $socialUser->getId(),
-            ]);
+            $user = DB::transaction(function () use ($names, $socialUser, $provider): User {
+                $user = User::create([
+                    'first_name' => $names[0],
+                    'last_name' => $names[1],
+                    'email' => $socialUser->getEmail(),
+                    'email_verified_at' => now(),
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                ]);
+
+                NotificationSetting::create(['user_id' => $user->id]);
+
+                return $user;
+            });
         }
 
         $token = $user->createToken('social-login')->plainTextToken;

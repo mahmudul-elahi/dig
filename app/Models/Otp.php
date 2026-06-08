@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[Fillable(['user_id', 'type', 'otp_hash', 'expires_at'])]
 class Otp extends Model
 {
     use HasFactory;
 
-    // types: 'email_verification', 'forgot_password'
     protected $attributes = [
         'type' => 'email_verification',
     ];
-
-    protected $fillable = ['user_id', 'type', 'otp_hash', 'expires_at'];
 
     protected $casts = [
         'expires_at' => 'datetime',

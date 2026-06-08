@@ -3,26 +3,28 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\MessageResponse;
+use App\Models\Otp;
 use App\Models\User;
+use App\Services\OtpService;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Http\Responses\MessageResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password as PasswordRules;
 
 #[Group('Authentication')]
 class ForgotPasswordOtpController extends Controller
 {
-    #[Endpoint(title: 'Send Password Reset OTP', description: 'Send a 5-digit OTP to the user\'s email for password reset.')]
+    #[Endpoint(title: 'Send Password Reset OTP', description: 'Send a 4-digit OTP to the user\'s email for password reset.')]
     public function send(Request $request): JsonResponse
     {
         $request->validate(['email' => ['required', 'email']]);
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        app(\App\Services\OtpService::class)->sendFor($user, 'forgot_password');
+        app(OtpService::class)->sendFor($user, 'forgot_password');
 
         return (new MessageResponse('Password reset OTP sent.'))->toResponse(request());
     }
@@ -32,17 +34,17 @@ class ForgotPasswordOtpController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'otp' => ['required', 'digits:5'],
+            'otp' => ['required', 'digits:4'],
         ]);
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        $record = \App\Models\Otp::where('user_id', $user->id)
+        $record = Otp::where('user_id', $user->id)
             ->ofType('forgot_password')
             ->latest()
             ->first();
 
-        if (! $record || $record->isExpired() || ! \Illuminate\Support\Facades\Hash::check($request->otp, $record->otp_hash)) {
+        if (! $record || $record->isExpired() || ! Hash::check($request->otp, $record->otp_hash)) {
             return (new MessageResponse('Invalid or expired OTP.', 422))->toResponse(request());
         }
 
@@ -54,13 +56,13 @@ class ForgotPasswordOtpController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'otp' => ['required', 'digits:5'],
+            'otp' => ['required', 'digits:4'],
             'password' => ['required', 'confirmed', PasswordRules::defaults()],
         ]);
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        $record = \App\Models\Otp::where('user_id', $user->id)
+        $record = Otp::where('user_id', $user->id)
             ->ofType('forgot_password')
             ->latest()
             ->first();
@@ -72,7 +74,7 @@ class ForgotPasswordOtpController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        \App\Models\Otp::where('user_id', $user->id)->ofType('forgot_password')->delete();
+        Otp::where('user_id', $user->id)->ofType('forgot_password')->delete();
 
         if (method_exists($user, 'tokens')) {
             $user->tokens()->delete();
