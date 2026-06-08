@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-#[Group('Quotes')]
+#[Group('Admins/Users Quotes')]
 class QuoteLikeController extends Controller
 {
     #[Endpoint(title: 'Like Quote', description: 'Like a quote as the authenticated user.')]
