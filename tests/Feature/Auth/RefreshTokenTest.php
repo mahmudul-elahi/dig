@@ -15,7 +15,7 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->postJson(route('token.refresh'));
+        $response = $this->withToken($token)->postJson('/token/refresh');
 
         $response->assertOk()
             ->assertJsonStructure(['token']);
@@ -32,7 +32,7 @@ class RefreshTokenTest extends TestCase
 
         $this->assertSame(1, $user->tokens()->count());
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         $this->assertSame(1, $user->fresh()->tokens()->count());
     }
@@ -42,11 +42,11 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         auth()->forgetGuards();
 
-        $this->withToken($token)->getJson(route('profile.show'))->assertUnauthorized();
+        $this->withToken($token)->getJson('/me')->assertUnauthorized();
     }
 
     public function test_new_token_authenticates_successfully(): void
@@ -54,18 +54,18 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $newToken = $this->withToken($token)->postJson(route('token.refresh'))
+        $newToken = $this->withToken($token)->postJson('/token/refresh')
             ->assertOk()
             ->json('token');
 
         auth()->forgetGuards();
 
-        $this->withToken($newToken)->getJson(route('profile.show'))->assertOk();
+        $this->withToken($newToken)->getJson('/me')->assertOk();
     }
 
     public function test_refresh_requires_authentication(): void
     {
-        $response = $this->postJson(route('token.refresh'));
+        $response = $this->postJson('/token/refresh');
 
         $response->assertUnauthorized();
     }
@@ -75,11 +75,11 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         auth()->forgetGuards();
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertUnauthorized();
+        $this->withToken($token)->postJson('/token/refresh')->assertUnauthorized();
     }
 
     public function test_refresh_preserves_token_name(): void
@@ -87,7 +87,7 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('mobile-device-1')->plainTextToken;
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         $this->assertSame('mobile-device-1', $user->fresh()->tokens()->first()->name);
     }
@@ -97,7 +97,7 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('api-key', ['read', 'write'])->plainTextToken;
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         $this->assertSame(['read', 'write'], $user->fresh()->tokens()->first()->abilities);
     }
@@ -107,7 +107,7 @@ class RefreshTokenTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->postJson(route('token.refresh'))->assertOk();
+        $this->withToken($token)->postJson('/token/refresh')->assertOk();
 
         $this->assertSame(['*'], $user->fresh()->tokens()->first()->abilities);
     }

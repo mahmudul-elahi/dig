@@ -3,9 +3,10 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Notifications\SendOtpVerification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -16,7 +17,7 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -34,7 +35,7 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -48,7 +49,7 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -66,7 +67,7 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -82,7 +83,7 @@ class LoginTest extends TestCase
 
         $user = User::factory()->unverified()->create();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -90,7 +91,7 @@ class LoginTest extends TestCase
         $response->assertForbidden()
             ->assertJson(['message' => 'Please verify your email. Verification OTP sent.']);
 
-        Notification::assertSentTo($user, \App\Notifications\SendOtpVerification::class);
+        Notification::assertSentTo($user, SendOtpVerification::class);
     }
 
     public function test_login_checks_a_password_hash_for_nonexistent_email(): void
@@ -103,7 +104,7 @@ class LoginTest extends TestCase
             })
             ->andReturnFalse();
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => 'nonexistent@example.com',
             'password' => 'password',
         ]);
@@ -115,7 +116,7 @@ class LoginTest extends TestCase
 
     public function test_login_fails_with_missing_fields(): void
     {
-        $response = $this->postJson(route('login'), []);
+        $response = $this->postJson('/login', []);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['email', 'password']);
@@ -123,7 +124,7 @@ class LoginTest extends TestCase
 
     public function test_login_fails_with_nonexistent_email(): void
     {
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => 'nonexistent@example.com',
             'password' => 'password',
         ]);
@@ -136,13 +137,13 @@ class LoginTest extends TestCase
         $user = User::factory()->create();
 
         for ($i = 0; $i < 6; $i++) {
-            $this->postJson(route('login'), [
+            $this->postJson('/login', [
                 'email' => $user->email,
                 'password' => 'wrong-password',
             ]);
         }
 
-        $response = $this->postJson(route('login'), [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);

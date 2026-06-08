@@ -15,7 +15,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->getJson(route('profile.show'));
+        $response = $this->withToken($token)->getJson('/me');
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -30,7 +30,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'first_name' => 'Updated',
             'last_name' => 'Name',
         ]);
@@ -48,7 +48,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'email' => 'new@example.com',
         ]);
 
@@ -65,7 +65,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->patchJson(route('profile.update'), [
+        $this->withToken($token)->patchJson('/user', [
             'email' => 'new@example.com',
         ])->assertOk();
 
@@ -77,7 +77,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'first_name' => 'Updated',
             'last_name' => 'Name',
             'email' => $user->email,
@@ -89,7 +89,7 @@ class ProfileTest extends TestCase
 
     public function test_update_requires_authentication(): void
     {
-        $response = $this->patchJson(route('profile.update'), [
+        $response = $this->patchJson('/user', [
             'first_name' => 'Updated',
             'last_name' => 'Name',
         ]);
@@ -102,7 +102,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'email' => 'not-an-email',
         ]);
 
@@ -116,7 +116,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'email' => 'taken@example.com',
         ]);
 
@@ -129,7 +129,7 @@ class ProfileTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('profile.update'), [
+        $response = $this->withToken($token)->patchJson('/user', [
             'first_name' => '',
         ]);
 

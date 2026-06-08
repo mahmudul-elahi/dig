@@ -14,7 +14,7 @@ class RegisterTest extends TestCase
 
     public function test_user_can_register_with_valid_data(): void
     {
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -42,7 +42,7 @@ class RegisterTest extends TestCase
 
     public function test_user_can_register_with_a_device_name(): void
     {
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -68,7 +68,7 @@ class RegisterTest extends TestCase
 
         Notification::fake();
 
-        $this->postJson(route('register'), [
+        $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -83,7 +83,7 @@ class RegisterTest extends TestCase
 
     public function test_registration_fails_without_required_fields(): void
     {
-        $response = $this->postJson(route('register'), []);
+        $response = $this->postJson('/register', []);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['first_name', 'email', 'password']);
@@ -91,7 +91,7 @@ class RegisterTest extends TestCase
 
     public function test_registration_fails_with_invalid_email(): void
     {
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'not-an-email',
@@ -105,7 +105,7 @@ class RegisterTest extends TestCase
 
     public function test_registration_fails_with_short_password(): void
     {
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -119,7 +119,7 @@ class RegisterTest extends TestCase
 
     public function test_registration_fails_with_mismatched_password_confirmation(): void
     {
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -135,7 +135,7 @@ class RegisterTest extends TestCase
     {
         User::factory()->create(['email' => 'test@example.com']);
 
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
@@ -150,7 +150,7 @@ class RegisterTest extends TestCase
     public function test_register_endpoint_allows_up_to_five_attempts_per_minute(): void
     {
         for ($i = 0; $i < 5; $i++) {
-            $response = $this->postJson(route('register'), [
+            $response = $this->postJson('/register', [
                 'first_name' => "User {$i}",
                 'last_name' => null,
                 'email' => "user{$i}@example.com",
@@ -165,7 +165,7 @@ class RegisterTest extends TestCase
     public function test_register_endpoint_is_rate_limited(): void
     {
         for ($i = 0; $i < 6; $i++) {
-            $this->postJson(route('register'), [
+            $this->postJson('/register', [
                 'first_name' => "User {$i}",
                 'last_name' => null,
                 'email' => "user{$i}@example.com",
@@ -174,7 +174,7 @@ class RegisterTest extends TestCase
             ]);
         }
 
-        $response = $this->postJson(route('register'), [
+        $response = $this->postJson('/register', [
             'first_name' => 'Final',
             'last_name' => 'User',
             'email' => 'final@example.com',
@@ -188,7 +188,7 @@ class RegisterTest extends TestCase
     public function test_register_throttle_keys_per_ip(): void
     {
         for ($i = 0; $i < 6; $i++) {
-            $this->postJson(route('register'), [
+            $this->postJson('/register', [
                 'first_name' => "User {$i}",
                 'last_name' => null,
                 'email' => "user{$i}@example.com",
@@ -197,7 +197,7 @@ class RegisterTest extends TestCase
             ]);
         }
 
-        $this->postJson(route('register'), [
+        $this->postJson('/register', [
             'first_name' => 'Same',
             'last_name' => 'IP',
             'email' => 'same@example.com',
@@ -206,7 +206,7 @@ class RegisterTest extends TestCase
         ])->assertTooManyRequests();
 
         $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.99'])
-            ->postJson(route('register'), [
+            ->postJson('/register', [
                 'first_name' => 'Different',
                 'last_name' => 'IP',
                 'email' => 'different@example.com',

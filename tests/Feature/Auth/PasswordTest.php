@@ -16,7 +16,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -33,7 +33,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->patchJson(route('password.update'), [
+        $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -43,7 +43,7 @@ class PasswordTest extends TestCase
 
         auth()->forgetGuards();
 
-        $this->withToken($token)->getJson(route('profile.show'))->assertUnauthorized();
+        $this->withToken($token)->getJson('/me')->assertUnauthorized();
     }
 
     public function test_password_update_revokes_other_tokens_for_the_user(): void
@@ -54,7 +54,7 @@ class PasswordTest extends TestCase
 
         $this->assertSame(2, $user->tokens()->count());
 
-        $this->withToken($token)->patchJson(route('password.update'), [
+        $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -69,7 +69,7 @@ class PasswordTest extends TestCase
         $token = $user->createToken('auth')->plainTextToken;
         $user->createToken('other-device');
 
-        $this->withToken($token)->patchJson(route('password.update'), [
+        $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'wrong-password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -80,7 +80,7 @@ class PasswordTest extends TestCase
 
     public function test_password_update_requires_authentication(): void
     {
-        $response = $this->patchJson(route('password.update'), [
+        $response = $this->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -94,7 +94,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'wrong-password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
@@ -109,7 +109,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'short',
             'password_confirmation' => 'short',
@@ -124,7 +124,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
         ]);
@@ -138,7 +138,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'different-password',
@@ -155,7 +155,7 @@ class PasswordTest extends TestCase
         $user = User::factory()->unverified()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->patchJson(route('password.update'), [
+        $response = $this->withToken($token)->patchJson('/user/password', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',

@@ -15,7 +15,7 @@ class LogoutTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $response = $this->withToken($token)->postJson(route('logout'));
+        $response = $this->withToken($token)->postJson('/logout');
 
         $response->assertNoContent();
         $this->assertDatabaseMissing('personal_access_tokens', [
@@ -28,16 +28,16 @@ class LogoutTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
-        $this->withToken($token)->postJson(route('logout'))->assertNoContent();
+        $this->withToken($token)->postJson('/logout')->assertNoContent();
 
         auth()->forgetGuards();
 
-        $this->withToken($token)->getJson(route('profile.show'))->assertUnauthorized();
+        $this->withToken($token)->getJson('/me')->assertUnauthorized();
     }
 
     public function test_logout_requires_authentication(): void
     {
-        $response = $this->postJson(route('logout'));
+        $response = $this->postJson('/logout');
 
         $response->assertUnauthorized();
     }
