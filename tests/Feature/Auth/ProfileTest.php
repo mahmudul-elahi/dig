@@ -19,7 +19,7 @@ class ProfileTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                'data' => ['id', 'type', 'attributes' => ['name', 'email', 'email_verified_at', 'created_at', 'updated_at']],
+                'data' => ['id', 'type', 'attributes' => ['first_name', 'last_name', 'email', 'email_verified_at', 'created_at', 'updated_at']],
             ])
             ->assertJsonPath('data.id', (string) $user->id)
             ->assertJsonPath('data.attributes.email', $user->email);
@@ -31,13 +31,16 @@ class ProfileTest extends TestCase
         $token = $user->createToken('auth')->plainTextToken;
 
         $response = $this->withToken($token)->patchJson(route('profile.update'), [
-            'name' => 'Updated Name',
+            'first_name' => 'Updated',
+            'last_name' => 'Name',
         ]);
 
         $response->assertOk()
-            ->assertJsonPath('data.attributes.name', 'Updated Name');
+            ->assertJsonPath('data.attributes.first_name', 'Updated')
+            ->assertJsonPath('data.attributes.last_name', 'Name');
 
-        $this->assertSame('Updated Name', $user->fresh()->name);
+        $this->assertSame('Updated', $user->fresh()->first_name);
+        $this->assertSame('Name', $user->fresh()->last_name);
     }
 
     public function test_user_can_update_their_email(): void
@@ -75,7 +78,8 @@ class ProfileTest extends TestCase
         $token = $user->createToken('auth')->plainTextToken;
 
         $response = $this->withToken($token)->patchJson(route('profile.update'), [
-            'name' => 'Updated Name',
+            'first_name' => 'Updated',
+            'last_name' => 'Name',
             'email' => $user->email,
         ]);
 
@@ -86,7 +90,8 @@ class ProfileTest extends TestCase
     public function test_update_requires_authentication(): void
     {
         $response = $this->patchJson(route('profile.update'), [
-            'name' => 'Updated Name',
+            'first_name' => 'Updated',
+            'last_name' => 'Name',
         ]);
 
         $response->assertUnauthorized();
@@ -119,17 +124,17 @@ class ProfileTest extends TestCase
             ->assertJsonValidationErrors(['email']);
     }
 
-    public function test_update_fails_with_empty_name(): void
+    public function test_update_fails_with_empty_first_name(): void
     {
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 
         $response = $this->withToken($token)->patchJson(route('profile.update'), [
-            'name' => '',
+            'first_name' => '',
         ]);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonValidationErrors(['first_name']);
     }
 
     public function test_user_can_delete_their_account(): void

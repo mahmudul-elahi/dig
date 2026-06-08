@@ -15,7 +15,8 @@ class RegisterTest extends TestCase
     public function test_user_can_register_with_valid_data(): void
     {
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -25,7 +26,8 @@ class RegisterTest extends TestCase
             ->assertJson(['message' => 'Verification OTP sent.']);
 
         $this->assertDatabaseHas('users', [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
         ]);
 
@@ -41,7 +43,8 @@ class RegisterTest extends TestCase
     public function test_user_can_register_with_a_device_name(): void
     {
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -66,7 +69,8 @@ class RegisterTest extends TestCase
         Notification::fake();
 
         $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -82,13 +86,14 @@ class RegisterTest extends TestCase
         $response = $this->postJson(route('register'), []);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'email', 'password']);
+            ->assertJsonValidationErrors(['first_name', 'email', 'password']);
     }
 
     public function test_registration_fails_with_invalid_email(): void
     {
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'not-an-email',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -101,7 +106,8 @@ class RegisterTest extends TestCase
     public function test_registration_fails_with_short_password(): void
     {
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'short',
             'password_confirmation' => 'short',
@@ -114,7 +120,8 @@ class RegisterTest extends TestCase
     public function test_registration_fails_with_mismatched_password_confirmation(): void
     {
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'different',
@@ -129,7 +136,8 @@ class RegisterTest extends TestCase
         User::factory()->create(['email' => 'test@example.com']);
 
         $response = $this->postJson(route('register'), [
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -143,7 +151,8 @@ class RegisterTest extends TestCase
     {
         for ($i = 0; $i < 5; $i++) {
             $response = $this->postJson(route('register'), [
-                'name' => "User {$i}",
+                'first_name' => "User {$i}",
+                'last_name' => null,
                 'email' => "user{$i}@example.com",
                 'password' => 'password',
                 'password_confirmation' => 'password',
@@ -157,7 +166,8 @@ class RegisterTest extends TestCase
     {
         for ($i = 0; $i < 6; $i++) {
             $this->postJson(route('register'), [
-                'name' => "User {$i}",
+                'first_name' => "User {$i}",
+                'last_name' => null,
                 'email' => "user{$i}@example.com",
                 'password' => 'password',
                 'password_confirmation' => 'password',
@@ -165,7 +175,8 @@ class RegisterTest extends TestCase
         }
 
         $response = $this->postJson(route('register'), [
-            'name' => 'Final User',
+            'first_name' => 'Final',
+            'last_name' => 'User',
             'email' => 'final@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -178,7 +189,8 @@ class RegisterTest extends TestCase
     {
         for ($i = 0; $i < 6; $i++) {
             $this->postJson(route('register'), [
-                'name' => "User {$i}",
+                'first_name' => "User {$i}",
+                'last_name' => null,
                 'email' => "user{$i}@example.com",
                 'password' => 'password',
                 'password_confirmation' => 'password',
@@ -186,7 +198,8 @@ class RegisterTest extends TestCase
         }
 
         $this->postJson(route('register'), [
-            'name' => 'Same IP',
+            'first_name' => 'Same',
+            'last_name' => 'IP',
             'email' => 'same@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -194,7 +207,8 @@ class RegisterTest extends TestCase
 
         $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.99'])
             ->postJson(route('register'), [
-                'name' => 'Different IP',
+                'first_name' => 'Different',
+                'last_name' => 'IP',
                 'email' => 'different@example.com',
                 'password' => 'password',
                 'password_confirmation' => 'password',

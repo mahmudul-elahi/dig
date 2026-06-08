@@ -24,7 +24,6 @@ Route::middleware('throttle:5,1')->group(function () {
 
 // Email verification is handled via the OTP endpoints; legacy signed-link route removed.
 
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', LogoutController::class);
     Route::post('token/refresh', RefreshTokenController::class);
@@ -33,6 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('user', [ProfileController::class, 'update']);
     Route::patch('user/password', PasswordUpdateController::class);
 
-    require __DIR__ . '/admin.php';
-    require __DIR__ . '/user.php';
+    require __DIR__.'/admin.php';
+    require __DIR__.'/user.php';
 });
