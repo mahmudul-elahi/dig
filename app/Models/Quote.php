@@ -20,6 +20,7 @@ class Quote extends Model
     {
         return [
             'reactions_count' => 'integer',
+            'is_liked' => 'boolean',
         ];
     }
 
@@ -36,5 +37,16 @@ class Quote extends Model
     public function quoteLikes(): HasMany
     {
         return $this->hasMany(QuoteLike::class);
+    }
+
+    public function isLikedBy(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        return $this->quoteLikes()
+            ->where('user_id', $user->getKey())
+            ->exists();
     }
 }

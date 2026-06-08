@@ -10,6 +10,7 @@ class QuoteResource extends ApiResource
         'source',
         'status',
         'reactions_count',
+        'is_liked',
         'created_at',
         'updated_at',
     ];

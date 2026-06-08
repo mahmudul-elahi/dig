@@ -20,8 +20,10 @@ class QuoteLikeController extends Controller
     public function store(Request $request, Quote $quote): JsonResponse
     {
         $created = $this->likeQuote($request->user(), $quote);
+        $quote = $quote->fresh();
+        $quote->setAttribute('is_liked', true);
 
-        return (new QuoteResource($quote->fresh()))
+        return (new QuoteResource($quote))
             ->response()
             ->setStatusCode($created ? JsonResponse::HTTP_CREATED : JsonResponse::HTTP_OK);
     }
@@ -30,8 +32,10 @@ class QuoteLikeController extends Controller
     public function destroy(Request $request, Quote $quote): JsonResponse
     {
         $this->unlikeQuote($request->user(), $quote);
+        $quote = $quote->fresh();
+        $quote->setAttribute('is_liked', false);
 
-        return (new QuoteResource($quote->fresh()))
+        return (new QuoteResource($quote))
             ->response()
             ->setStatusCode(JsonResponse::HTTP_OK);
     }

@@ -73,11 +73,6 @@ class User extends Authenticatable
         return $this->hasMany(Quote::class);
     }
 
-    public function quoteLikes(): HasMany
-    {
-        return $this->hasMany(QuoteLike::class);
-    }
-
     public function latestSubscription(): HasOne
     {
         return $this->hasOne(Subscription::class)->latestOfMany();

@@ -26,6 +26,9 @@ class QuoteController extends Controller
             ->allowedFilters(
                 AllowedFilter::exact('status'),
             )
+            ->withExists([
+                'quoteLikes as is_liked' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
+            ])
             ->paginate(min((int) $request->input('per_page', 10), 100));
 
         return QuoteResource::collection($quotes);
@@ -35,6 +38,7 @@ class QuoteController extends Controller
     public function store(StoreQuoteRequest $request): JsonResponse
     {
         $quote = $request->user()->quotes()->create($request->validated());
+        $quote->setAttribute('is_liked', false);
 
         return (new QuoteResource($quote))
             ->response()
@@ -42,8 +46,10 @@ class QuoteController extends Controller
     }
 
     #[Endpoint(title: 'Show Quote', description: 'Retrieve a single quote.')]
-    public function show(Quote $quote): QuoteResource
+    public function show(Request $request, Quote $quote): QuoteResource
     {
+        $quote->setAttribute('is_liked', $quote->isLikedBy($request->user()));
+
         return new QuoteResource($quote);
     }
 
@@ -53,8 +59,10 @@ class QuoteController extends Controller
         $this->authorizeQuote($request, $quote);
 
         $quote->update($request->validated());
+        $quote = $quote->fresh();
+        $quote->setAttribute('is_liked', $quote->isLikedBy($request->user()));
 
-        return new QuoteResource($quote->fresh());
+        return new QuoteResource($quote);
     }
 
     #[Endpoint(title: 'Delete Quote', description: 'Delete a quote.')]

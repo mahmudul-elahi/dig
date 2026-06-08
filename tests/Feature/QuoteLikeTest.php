@@ -20,13 +20,15 @@ class QuoteLikeTest extends TestCase
             ->postJson("/quotes/{$quote->id}/likes");
 
         $firstResponse->assertCreated()
-            ->assertJsonPath('data.attributes.reactions_count', 1);
+            ->assertJsonPath('data.attributes.reactions_count', 1)
+            ->assertJsonPath('data.attributes.is_liked', true);
 
         $secondResponse = $this->withToken($user->createToken('auth')->plainTextToken)
             ->postJson("/quotes/{$quote->id}/likes");
 
         $secondResponse->assertOk()
-            ->assertJsonPath('data.attributes.reactions_count', 1);
+            ->assertJsonPath('data.attributes.reactions_count', 1)
+            ->assertJsonPath('data.attributes.is_liked', true);
 
         $this->assertDatabaseCount('quote_likes', 1);
         $this->assertDatabaseHas('quote_likes', [
@@ -52,7 +54,8 @@ class QuoteLikeTest extends TestCase
             ->deleteJson("/quotes/{$quote->id}/likes");
 
         $response->assertOk()
-            ->assertJsonPath('data.attributes.reactions_count', 0);
+            ->assertJsonPath('data.attributes.reactions_count', 0)
+            ->assertJsonPath('data.attributes.is_liked', false);
 
         $this->assertDatabaseMissing('quote_likes', [
             'user_id' => $user->id,
