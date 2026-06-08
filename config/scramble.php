@@ -19,6 +19,7 @@ return [
             'sanctum/csrf-cookie',
             'storage/*',
             '_boost/*',
+            'webhook/*',
         ],
     ],
 
