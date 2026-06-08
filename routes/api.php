@@ -9,7 +9,10 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RefreshTokenController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\Webhook\RevenueCatController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('webhook/revenuecat', RevenueCatController::class);
 
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('register', RegisterController::class);

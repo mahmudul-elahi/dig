@@ -17,6 +17,8 @@ class UserResource extends JsonApiResource
         'email',
         'email_verified_at',
         'role',
+        'is_premium',
+        'ends_at',
         'created_at',
         'updated_at',
     ];
