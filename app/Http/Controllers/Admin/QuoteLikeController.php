@@ -95,9 +95,9 @@ class QuoteLikeController extends Controller
 
             $existingLike->delete();
 
-            $lockedQuote->update([
-                'reactions_count' => max(0, $lockedQuote->reactions_count - 1),
-            ]);
+            if ($lockedQuote->reactions_count > 0) {
+                $lockedQuote->decrement('reactions_count');
+            }
 
             return true;
         });

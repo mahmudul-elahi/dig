@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'quote', 'source', 'status', 'reactions_count'])]
+#[Fillable(['user_id', 'quote', 'source', 'status'])]
 class Quote extends Model
 {
     /** @use HasFactory<QuoteFactory> */

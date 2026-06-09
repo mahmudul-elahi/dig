@@ -29,6 +29,7 @@ class QuoteController extends Controller
             ->withExists([
                 'quoteLikes as is_liked' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
             ])
+            ->latest()
             ->paginate(min((int) $request->input('per_page', 10), 100));
 
         return QuoteResource::collection($quotes);
